@@ -6,26 +6,40 @@ import {
   getUserSessionsHandler,
 } from './controller/session.controller';
 import {
+  createPostHandler,
+  updatePostHandler,
+  getPostHandler,
+  deletePostHandler,
+} from './controller/post.controller';
+import {
   createUserSchema,
   createUserSessionSchema,
 } from './schema/user.schema';
+import {
+  createPostSchema,
+  updatePostSchema,
+  deletePostSchema,
+} from './schema/post.schema';
 import { validateRequest, requiresUser } from './middleware';
 
-export default function (app: Express) {
+export default function routes(app: Express) {
   app.get('/healthcheck', (req: Request, res: Response) => {
     res.sendStatus(200);
   });
 
   // register user
   app.post('/api/users', validateRequest(createUserSchema), createUserHandler);
+
   // login
   app.post(
     '/api/sessions',
     validateRequest(createUserSessionSchema),
     createUserSessionHandler,
   );
+
   // get users session
   app.get('/api/sessions', requiresUser, getUserSessionsHandler);
+
   // logout
   app.delete('/api/sessions', requiresUser, invalidateUserSessionHandler);
 

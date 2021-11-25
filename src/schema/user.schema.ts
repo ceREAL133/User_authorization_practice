@@ -13,12 +13,8 @@ export const createUserSchema = object({
         'password should be minimum 8 chars long, and contain at least one upper-case, one lowercase English letter, one digit, one symbol from the list ( ~!@#$%^&*()_+{}[] )',
       ),
     age: number()
-      .test(
-        'Is positive?',
-        'Age must be greater than 0!',
-        (value: any) => value > 0,
-      )
-      .required('Age is required and must be more then 1'),
+      .moreThan(0, 'Age must be greater then 0')
+      .required('Age is required'),
     passwordConfirmation: string().oneOf(
       [ref('password'), null],
       'Passwords must match',
