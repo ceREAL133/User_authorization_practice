@@ -35,3 +35,7 @@ export async function validatePassword({
 
   return omit(user.toJSON(), 'password');
 }
+
+export async function findUsers() {
+  return User.find({}).lean();
+}

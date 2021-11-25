@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { omit } from 'lodash';
-import { createUser } from '../service/user.service';
+import { createUser, findUsers } from '../service/user.service';
 import log from '../logger';
 
 export async function createUserHandler(req: Request, res: Response) {
@@ -11,4 +11,10 @@ export async function createUserHandler(req: Request, res: Response) {
     log.error(e);
     return res.status(409).send(e.message);
   }
+}
+
+export async function getAllUsersHandler(req: Request, res: Response) {
+  const users = await findUsers();
+
+  return res.send(users);
 }
