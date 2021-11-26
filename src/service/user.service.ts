@@ -11,7 +11,7 @@ export async function createUser(input: DocumentDefinition<UserDocument>) {
 }
 
 export async function findUser(query: FilterQuery<UserDocument>) {
-  return User.findOne(query).lean();
+  return User.findOne(query)?.lean();
 }
 
 export async function validatePassword({
@@ -36,6 +36,10 @@ export async function validatePassword({
   return omit(user.toJSON(), 'password');
 }
 
-export async function findUsers() {
+export async function findFewUsers() {
   return User.find({}).lean();
+}
+
+export function deleteUser(query: FilterQuery<UserDocument>) {
+  return User.deleteOne(query);
 }

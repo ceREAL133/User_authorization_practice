@@ -1,5 +1,10 @@
 import { Express, Request, Response } from 'express';
-import { createUserHandler, getAllUsersHandler } from './controller/user.controller';
+import {
+  createUserHandler,
+  getAllUsersHandler,
+  getUserByIdHandler,
+  deleteUserHandler,
+} from './controller/user.controller';
 import {
   createUserSessionHandler,
   invalidateUserSessionHandler,
@@ -28,13 +33,27 @@ export default function routes(app: Express) {
   });
 
   // register user
-  app.post('/api/users', [requiresUser, validateRequest(createUserSchema)], createUserHandler);
+  app.post(
+    '/api/users',
+    [requiresUser, validateRequest(createUserSchema)],
+    createUserHandler,
+  );
 
   // get users list
   app.get('/api/users', requiresUser, getAllUsersHandler);
 
+  // get user by id
+  app.get('/api/users/:userId', requiresUser, getUserByIdHandler);
+
+  // delete user (by id)
+  app.delete('/api/users/:userId', requiresUser, deleteUserHandler);
+
   // login
-  app.post('/api/sessions', validateRequest(createUserSessionSchema), createUserSessionHandler);
+  app.post(
+    '/api/sessions',
+    validateRequest(createUserSessionSchema),
+    createUserSessionHandler,
+  );
 
   // get users session
   app.get('/api/sessions', requiresUser, getUserSessionsHandler);

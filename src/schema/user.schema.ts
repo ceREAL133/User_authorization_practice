@@ -9,7 +9,7 @@ export const createUserSchema = object({
       .required('Password is required')
       .min(8, 'Password is too short, should be 8 chars minimum')
       .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&~^*()_+{}])[A-Za-z\d@$!%*?&~^*()_+{}]{8,}$/,
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&~^*()_+{}[\]])[A-Za-z\d@$!%*?&~^*()_+{}[\]]{8,}$/,
         'password should be minimum 8 chars long, and contain at least one upper-case, one lowercase English letter, one digit, one symbol from the list ( ~!@#$%^&*()_+{}[] )',
       ),
     age: number()

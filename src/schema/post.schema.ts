@@ -2,10 +2,9 @@ import { object, string } from 'yup';
 
 const payload = {
   body: object({
-    title: string().required('title is required'),
-    body: string()
-      .required('body is required')
-      .min(10, 'body is too short - should be at least 10 chars long'),
+    text: string()
+      .required('text is required')
+      .min(10, 'text is too short - should be at least 10 chars long'),
   }),
 };
 

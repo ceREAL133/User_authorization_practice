@@ -33,6 +33,7 @@ const deserializeUser = async (
       // Add the new access token to the response header
       res.setHeader('x-access-token', newAccessToken);
 
+      // eslint-disable-next-line no-shadow
       const { decoded } = decode(newAccessToken);
 
       // @ts-ignore
