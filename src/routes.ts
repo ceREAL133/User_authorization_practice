@@ -25,7 +25,7 @@ import {
   updatePostSchema,
   deletePostSchema,
 } from './schema/post.schema';
-import { validateRequest, requiresUser } from './middleware';
+import { validateRequest, requiresUser, checkId } from './middleware';
 
 export default function routes(app: Express) {
   app.get('/healthcheck', (req: Request, res: Response) => {
@@ -43,10 +43,18 @@ export default function routes(app: Express) {
   app.get('/api/users', requiresUser, getAllUsersHandler);
 
   // get user by id
-  app.get('/api/users/:userId', requiresUser, getUserByIdHandler);
+  app.get(
+    '/api/users/:userId',
+    [requiresUser, checkId],
+    getUserByIdHandler,
+  );
 
   // delete user (by id)
-  app.delete('/api/users/:userId', requiresUser, deleteUserHandler);
+  app.delete(
+    '/api/users/:userId',
+    [requiresUser, checkId],
+    deleteUserHandler,
+  );
 
   // login
   app.post(
