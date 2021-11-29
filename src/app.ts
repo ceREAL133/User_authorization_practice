@@ -5,7 +5,7 @@ import connect from './db/connect';
 import routes from './routes';
 import { deserializeUser } from './middleware';
 
-// const port = config.get('port') as number;
+const port = config.get('port') as number;
 const host = config.get('host') as string;
 
 const app = express();
@@ -14,8 +14,8 @@ app.use(deserializeUser);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.listen(4000, host, () => {
-  log.info(`Server listening at http://${host}:4000`);
+app.listen(port || 3000, host, () => {
+  log.info(`Server listening at http://${host}:${port}`);
 
   connect();
   routes(app);
