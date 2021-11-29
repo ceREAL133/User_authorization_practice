@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "start": "node dist/src/app.js",
+    "start": "node dist/app.js",
     "postinstall": "tsc",
     "dev": "nodemon --config nodemon.json src/app.ts",
     "watch-ts": "tsc -w",
