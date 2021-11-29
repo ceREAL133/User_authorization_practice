@@ -7,7 +7,7 @@ This is an express.js app, which is written on **TypeScript**, it's using **Mong
 ## How to use this app
 
 - First of all you need to go to https://sigma-new-test-task.herokuapp.com/ , to make sure that app is running it should be a **Cannot GET /** on the preview page
-- Then you you must open **Postman** app, to send requests to our app
+- Then you must open **Postman** app, to send requests to our app
 - So, when Postman is opened, you have to import this collection:
   https://www.postman.com/collections/242fc1d3ffe09d04667a
 
@@ -44,13 +44,13 @@ https://sigma-new-test-task.herokuapp.com
 
 It's a hosted user, so if you'll use another data, it may not work
 
-- Then u'll get an Access Token and Refresh Token which will look like:
+- Then you'll get an Access Token and Refresh Token which will look like:
 
   ```
   "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWE0ZTc5MjkzM2ExNjAwMDQ0OWU3NTEiLCJlbWFpbCI6InJ1Ymljc0N1YmVAZ21haWwuY29tIiwiYWdlIjoxOSwibmFtZSI6IlJ1YmljayIsImNyZWF0ZWRBdCI6IjIwMjEtMTEtMjlUMTQ6NDU6MzguNTcyWiIsInVwZGF0ZWRBdCI6IjIwMjEtMTEtMjlUMTQ6NDU6MzguNTcyWiIsIl9fdiI6MCwic2Vzc2lvbiI6IjYxYTRlN2I0OTMzYTE2MDAwNDQ5ZTc1NCIsImlhdCI6MTYzODE5NzE3MiwiZXhwIjoxNjM4MTk4MDcyfQ.mRvFnSgQKbFNsXnudmMV2sjzRgrTjj9LoawFQYmTVaU",
   ```
 
-  ## Its important!!!
+  ## It's important!!!
 
   You have to set it up as environment variable called **accessToken**
 
@@ -79,11 +79,11 @@ It's a hosted user, so if you'll use another data, it may not work
 
 - To create post you have to use **create post** request, just add text in body
 
-- To see all posts stored in DB use **get all posts** request
+- To see all your posts stored in DB use **get user's posts** request
 
 - You can use **postId** from your created post, or another from db to see info about single post, using **get post by id** method
 
-- You can use **postId** from your created post, or another from db to change text in your post, using **get post by id** method 
+- You can use **postId** from your created post, or another from db to change text in your post, using **update post** method 
 
 - Use **delete post** method to delete your post 
 

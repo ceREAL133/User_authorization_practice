@@ -49,7 +49,9 @@ export async function getSinglePostHandler(req: Request, res: Response) {
 }
 
 export async function getPostsHandler(req: Request, res: Response) {
-  const posts = await Post.find({});
+  const userId = get(req, 'user._id');
+
+  const posts = await Post.find({ userId });
 
   if (!posts) {
     return res.sendStatus(404);

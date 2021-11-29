@@ -87,8 +87,8 @@ export default function routes(app: Express) {
   // get post
   app.get('/api/posts/:postId', getSinglePostHandler);
 
-  // get all posts
-  app.get('/api/posts/', getPostsHandler);
+  // get user's posts
+  app.get('/api/posts/', requiresUser, getPostsHandler);
 
   // delete a post
   app.delete(
