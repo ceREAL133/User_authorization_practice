@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { get } from 'lodash';
+import Post from '../model/post.model';
 import {
   createPost,
   findPost,
@@ -36,7 +37,7 @@ export async function updatePostHandler(req: Request, res: Response) {
   return res.send(updatedPost);
 }
 
-export async function getPostHandler(req: Request, res: Response) {
+export async function getSinglePostHandler(req: Request, res: Response) {
   const postId = get(req, 'params.postId');
   const post = await findPost({ postId });
 
@@ -45,6 +46,16 @@ export async function getPostHandler(req: Request, res: Response) {
   }
 
   return res.send(post);
+}
+
+export async function getPostsHandler(req: Request, res: Response) {
+  const posts = await Post.find({});
+
+  if (!posts) {
+    return res.sendStatus(404);
+  }
+
+  return res.send(posts);
 }
 
 export async function deletePostHandler(req: Request, res: Response) {

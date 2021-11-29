@@ -13,7 +13,8 @@ import {
 import {
   createPostHandler,
   updatePostHandler,
-  getPostHandler,
+  getSinglePostHandler,
+  getPostsHandler,
   deletePostHandler,
 } from './controller/post.controller';
 import {
@@ -84,7 +85,10 @@ export default function routes(app: Express) {
   );
 
   // get post
-  app.get('/api/posts/:postId', getPostHandler);
+  app.get('/api/posts/:postId', getSinglePostHandler);
+
+  // get all posts
+  app.get('/api/posts/', getPostsHandler);
 
   // delete a post
   app.delete(
