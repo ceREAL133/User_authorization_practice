@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 export default {
-  port: 3000,
+  port: 3000 || 5000,
   host: 'localhost',
   dbUri: process.env.dbUri,
   saltWorkFactor: 10,
