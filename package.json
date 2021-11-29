@@ -7,7 +7,7 @@
     "node": "14.17.0"
   },
   "scripts": {
-    "start": "nodemon --config nodemon.json src/app.ts",
+    "start": "ts-node src/app.ts",
     "dev": "nodemon --config nodemon.json src/app.ts",
     "lint": "eslint **/*.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -25,7 +25,6 @@
     "lodash": "^4.17.21",
     "mongoose": "^5.13.8",
     "nanoid": "^3.1.30",
-    "nodemon": "^2.0.15",
     "pino": "^7.4.0",
     "pino-pretty": "^7.2.0",
     "pm2": "^5.1.2",
@@ -48,6 +47,7 @@
     "eslint": "^8.3.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.3",
+    "nodemon": "^2.0.15",
     "ts-node": "^10.4.0",    
     "typescript": "^4.5.2"
   }
