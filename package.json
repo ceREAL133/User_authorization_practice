@@ -8,8 +8,10 @@
   },
   "scripts": {
     "build": "tsc",
-    "start": "node src/app.js",
+    "start": "node dist/src/app.js",
+    "postinstall": "tsc",
     "dev": "nodemon --config nodemon.json src/app.ts",
+    "watch-ts": "tsc -w",
     "lint": "eslint **/*.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
