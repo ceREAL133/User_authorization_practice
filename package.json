@@ -12,6 +12,7 @@
     "postinstall": "tsc",
     "watch-node": "nodemon dist/src/app.js",
     "watch-ts": "tsc -w",
+    "dev": "nodemon --config nodemon.json src/app.ts",
     "lint": "eslint **/*.ts"
   },
   "keywords": [],

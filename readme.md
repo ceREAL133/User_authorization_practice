@@ -23,7 +23,7 @@ press **import** button on the left side of **Postman** window
     <img  src="./readme_assets/environmentalVars.png" width="80%">
   </p>
 
-set he value as
+set the value of **herokuHost** as: 
 
 ```
 https://sigma-new-test-task.herokuapp.com
@@ -78,5 +78,22 @@ It's a hosted user, so if you'll use another data, it may not work
 -  **delete session** will stop YOUR current session
 
 - To create post you have to use **create post** request, just add text in body
-  
-- You can use **postId** from your created post, or another from db
+
+- To see all posts stored in DB use **get all posts** request
+
+- You can use **postId** from your created post, or another from db to see info about single post, using **get post by id** method
+
+- You can use **postId** from your created post, or another from db to change text in your post, using **get post by id** method 
+
+- Use **delete post** method to delete your post 
+
+## Project setup
+
+Use *http://localhost:3000* instead of **herokuHost**
+
+```
+npm install
+npm run dev
+```
+
+### Hope this documentation was helpful
