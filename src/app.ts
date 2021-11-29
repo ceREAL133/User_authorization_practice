@@ -6,7 +6,6 @@ import routes from './routes';
 import { deserializeUser } from './middleware';
 
 const port = config.get('port') as number;
-const host = config.get('host') as string;
 
 const app = express();
 app.use(deserializeUser);
@@ -14,8 +13,8 @@ app.use(deserializeUser);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.listen(port || 3000, host, () => {
-  log.info(`Server listening at http://${host}:${port}`);
+app.listen(process.env.PORT || 3000, () => {
+  log.info(`Server listening at http://localhost:${port}`);
 
   connect();
   routes(app);
