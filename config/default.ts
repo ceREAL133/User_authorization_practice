@@ -3,9 +3,9 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 export default {
-  port: process.env.PORT || 3000,
+  port: process.env.PORT,
   host: 'localhost',
-  dbUri: process.env.dbUri,
+  dbUri: process.env.MONGODB_CONNECTION_STRING,
   saltWorkFactor: 10,
   accessTokenTtl: '15m',
   refreshTokenTtl: '1y',
