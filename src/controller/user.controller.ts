@@ -21,6 +21,8 @@ export async function createUserHandler(req: Request, res: Response) {
 export async function getAllUsersHandler(req: Request, res: Response) {
   const users = await findFewUsers();
 
+  console.log(users);
+
   return res.send(users);
 }
 

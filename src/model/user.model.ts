@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
-import config from 'config';
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+import config from "config";
 
 export interface UserDocument extends mongoose.Document {
   email: string;
@@ -19,17 +19,17 @@ const UserSchema = new mongoose.Schema(
     age: { type: Number, required: true },
     password: { type: String, required: true },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
-UserSchema.pre('save', async function (next: mongoose.HookNextFunction) {
+UserSchema.pre("save", async function (next: mongoose.HookNextFunction) {
   const user = this as UserDocument;
 
   // only hash the password if it has been modified (or is new)
-  if (!user.isModified('password')) return next();
+  if (!user.isModified("password")) return next();
 
   // Random additional data
-  const salt = await bcrypt.genSalt(config.get('saltWorkFactor'));
+  const salt = await bcrypt.genSalt(config.get("saltWorkFactor"));
 
   const hash = await bcrypt.hashSync(user.password, salt);
 
@@ -41,13 +41,15 @@ UserSchema.pre('save', async function (next: mongoose.HookNextFunction) {
 
 // Used for logging in
 UserSchema.methods.comparePassword = async function (
-  candidatePassword: string,
+  candidatePassword: string
 ) {
   const user = this as UserDocument;
 
-  return bcrypt.compare(candidatePassword, user.password).catch((e: any) => false);
+  return bcrypt
+    .compare(candidatePassword, user.password)
+    .catch((e: any) => false);
 };
 
-const User = mongoose.model<UserDocument>('User', UserSchema);
+const User = mongoose.model<UserDocument>("User", UserSchema);
 
 export default User;

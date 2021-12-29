@@ -1,99 +1,87 @@
-import { Express, Request, Response } from 'express';
+import { Express, Request, Response } from "express";
 import {
   createUserHandler,
   getAllUsersHandler,
   getUserByIdHandler,
   deleteUserHandler,
-} from './controller/user.controller';
+} from "./controller/user.controller";
 import {
   createUserSessionHandler,
   invalidateUserSessionHandler,
   getUserSessionsHandler,
-} from './controller/session.controller';
+} from "./controller/session.controller";
 import {
   createPostHandler,
   updatePostHandler,
   getSinglePostHandler,
   getPostsHandler,
   deletePostHandler,
-} from './controller/post.controller';
+} from "./controller/post.controller";
 import {
   createUserSchema,
   createUserSessionSchema,
-} from './schema/user.schema';
+} from "./schema/user.schema";
 import {
   createPostSchema,
   updatePostSchema,
   deletePostSchema,
-} from './schema/post.schema';
-import { validateRequest, requiresUser, checkId } from './middleware';
+} from "./schema/post.schema";
+import { validateRequest, requiresUser, checkId } from "./middleware";
 
 export default function routes(app: Express) {
-  app.get('/healthcheck', (req: Request, res: Response) => {
+  app.get("/healthcheck", (req: Request, res: Response) => {
     res.sendStatus(200);
   });
 
   // register user
-  app.post(
-    '/api/users',
-    [requiresUser, validateRequest(createUserSchema)],
-    createUserHandler,
-  );
+  app.post("/api/users", validateRequest(createUserSchema), createUserHandler);
 
   // get users list
-  app.get('/api/users', requiresUser, getAllUsersHandler);
+  app.get("/api/users", getAllUsersHandler);
 
   // get user by id
-  app.get(
-    '/api/users/:userId',
-    [requiresUser, checkId],
-    getUserByIdHandler,
-  );
+  app.get("/api/users/:userId", checkId, getUserByIdHandler);
 
   // delete user (by id)
-  app.delete(
-    '/api/users/:userId',
-    [requiresUser, checkId],
-    deleteUserHandler,
-  );
+  app.delete("/api/users/:userId", [requiresUser, checkId], deleteUserHandler);
 
   // login
   app.post(
-    '/api/sessions',
+    "/api/sessions",
     validateRequest(createUserSessionSchema),
-    createUserSessionHandler,
+    createUserSessionHandler
   );
 
   // get users session
-  app.get('/api/sessions', requiresUser, getUserSessionsHandler);
+  app.get("/api/sessions", requiresUser, getUserSessionsHandler);
 
   // logout
-  app.delete('/api/sessions', requiresUser, invalidateUserSessionHandler);
+  app.delete("/api/sessions", requiresUser, invalidateUserSessionHandler);
 
   // create a post
   app.post(
-    '/api/posts',
+    "/api/posts",
     [requiresUser, validateRequest(createPostSchema)],
-    createPostHandler,
+    createPostHandler
   );
 
   // update a post
   app.put(
-    '/api/posts/:postId',
+    "/api/posts/:postId",
     [requiresUser, validateRequest(updatePostSchema)],
-    updatePostHandler,
+    updatePostHandler
   );
 
   // get post
-  app.get('/api/posts/:postId', getSinglePostHandler);
+  app.get("/api/posts/:postId", getSinglePostHandler);
 
   // get user's posts
-  app.get('/api/posts/', requiresUser, getPostsHandler);
+  app.get("/api/posts/", requiresUser, getPostsHandler);
 
   // delete a post
   app.delete(
-    '/api/posts/:postId',
+    "/api/posts/:postId",
     [requiresUser, validateRequest(deletePostSchema)],
-    deletePostHandler,
+    deletePostHandler
   );
 }
