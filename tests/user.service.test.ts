@@ -2,7 +2,9 @@ const {
   createUser,
   findFewUsers,
   deleteUser,
+  findUser,
 } = require('../src/service/user.service');
+import { query } from 'express';
 import User from '../src/model/user.model';
 
 const userPayload = () => ({
@@ -51,7 +53,7 @@ describe('user service', () => {
   });
 
   describe('find all users', () => {
-    it('should return all users', async () => {
+    it('findFewUsers query should be equal to {}', async () => {
       const query = {};
       User.find = jest.fn(() => ({
         lean: function leanFunc() {},
@@ -59,6 +61,18 @@ describe('user service', () => {
 
       await findFewUsers();
       expect(User.find).toHaveBeenCalledWith(query);
+    });
+  });
+
+  describe('find one user', () => {
+    it('findUser query should be equal {}', async () => {
+      const query = {};
+      User.findOne = jest.fn(() => ({
+        lean: function leanFunc() {},
+      })) as any;
+
+      await findUser(query);
+      expect(User.findOne).toHaveBeenCalledWith(query);
     });
   });
 });
