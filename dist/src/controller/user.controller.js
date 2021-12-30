@@ -32,6 +32,7 @@ exports.createUserHandler = createUserHandler;
 function getAllUsersHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const users = yield (0, user_service_1.findFewUsers)();
+        console.log(users);
         return res.send(users);
     });
 }

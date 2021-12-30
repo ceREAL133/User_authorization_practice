@@ -1,4 +1,8 @@
-const { createUser, findFewUsers } = require('../src/service/user.service');
+const {
+  createUser,
+  findFewUsers,
+  deleteUser,
+} = require('../src/service/user.service');
 import User from '../src/model/user.model';
 
 const userPayload = () => ({
@@ -33,6 +37,28 @@ describe('user service', () => {
       );
 
       User.create = oldCreate;
+    });
+  });
+
+  describe('delete user', () => {
+    it('should delete user', async () => {
+      User.deleteOne = jest.fn();
+      const query = {};
+
+      await deleteUser(query);
+      expect(User.deleteOne).toHaveBeenCalledWith(query);
+    });
+  });
+
+  describe('find all users', () => {
+    it('should return all users', async () => {
+      const query = {};
+      User.find = jest.fn(() => ({
+        lean: function leanFunc() {},
+      })) as any;
+
+      await findFewUsers();
+      expect(User.find).toHaveBeenCalledWith(query);
     });
   });
 });

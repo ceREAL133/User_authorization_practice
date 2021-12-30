@@ -21,14 +21,14 @@ const UserSchema = new mongoose_1.default.Schema({
     age: { type: Number, required: true },
     password: { type: String, required: true },
 }, { timestamps: true });
-UserSchema.pre('save', function (next) {
+UserSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         const user = this;
         // only hash the password if it has been modified (or is new)
-        if (!user.isModified('password'))
+        if (!user.isModified("password"))
             return next();
         // Random additional data
-        const salt = yield bcrypt_1.default.genSalt(config_1.default.get('saltWorkFactor'));
+        const salt = yield bcrypt_1.default.genSalt(config_1.default.get("saltWorkFactor"));
         const hash = yield bcrypt_1.default.hashSync(user.password, salt);
         // Replace the password with the hash
         user.password = hash;
@@ -39,8 +39,10 @@ UserSchema.pre('save', function (next) {
 UserSchema.methods.comparePassword = function (candidatePassword) {
     return __awaiter(this, void 0, void 0, function* () {
         const user = this;
-        return bcrypt_1.default.compare(candidatePassword, user.password).catch((e) => false);
+        return bcrypt_1.default
+            .compare(candidatePassword, user.password)
+            .catch((e) => false);
     });
 };
-const User = mongoose_1.default.model('User', UserSchema);
+const User = mongoose_1.default.model("User", UserSchema);
 exports.default = User;
