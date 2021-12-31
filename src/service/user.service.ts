@@ -37,8 +37,6 @@ export async function validatePassword({
 }
 
 export async function findFewUsers() {
-  console.log(User.find({}).lean());
-
   return User.find({}).lean();
 }
 

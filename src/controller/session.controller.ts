@@ -38,7 +38,7 @@ export async function createUserSessionHandler(req: Request, res: Response) {
 
 export async function invalidateUserSessionHandler(
   req: Request,
-  res: Response,
+  res: Response
 ) {
   const sessionId = get(req, 'user.session');
 
