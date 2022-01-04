@@ -10,7 +10,7 @@
   "scripts": {
     "start": "set NODE_ENV=development && node dist/src/app.js",
     "postinstall": "tsc",
-    "test": "NODE_ENV= jest --watch",
+    "test": "set NODE_ENV=test jest --watch",
     "watch-node": "nodemon dist/src/app.js",
     "watch-ts": "tsc -w",
     "dev": "nodemon --config nodemon.json src/app.ts",

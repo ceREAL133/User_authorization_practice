@@ -5,9 +5,8 @@ const {
   findUser,
   validatePassword,
 } = require('../src/service/user.service');
-import bcrypt from 'bcrypt';
 import User from '../src/model/user.model';
-import UserSchema from '../src/model/user.model';
+import { omit } from 'lodash';
 
 const userPayload = () => ({
   email: 'jane@example.com',
@@ -16,6 +15,14 @@ const userPayload = () => ({
   password: '1CubeIsCool!',
   passwordConfirmation: '1CubeIsCool!',
 });
+
+const mockCreateUser = {
+  email: 'jane@example.com',
+  name: 'Jane',
+  age: 15,
+  password: '1CubeIsCool!',
+  passwordConfirmation: '1CubeIsCool!',
+};
 
 const userExample = {
   email: 'jane@example.com',
@@ -27,24 +34,52 @@ const userExample = {
       return true;
     } else return false;
   }),
-  toJSON: jest.fn(),
+  toJSON: jest.fn(() => {
+    return {
+      email: 'jane@example.com',
+      name: 'Jane',
+      age: 15,
+      password: '1CubeIsCool!',
+    };
+  }),
+};
+
+const mockUser = {
+  email: 'fakeEmail@gmail.com',
+  password: '1CubeIsCool!',
+};
+
+const ommitedUser = {
+  email: 'jane@example.com',
+  name: 'Jane',
+  age: 15,
 };
 
 describe('user service', () => {
   describe('validatePassword', () => {
-    it('should check is user exist', async () => {
+    it('should return false if user is not exist', async () => {
       const oldFind = User.findOne;
-      User.findOne = jest.fn(({ email }) => {
-        if (userExample.email === email) {
-          return userExample;
-        } else return false;
-      }) as any;
-      const validation = await validatePassword({
-        email: 'jane@example.com',
-        password: '1CubeIsCool!',
-      });
-      expect(validation).toBe(false);
+      User.findOne = jest.fn(() => null) as any;
+      const validation = await validatePassword(mockUser);
+
+      expect(User.findOne).toHaveBeenCalledWith({ email: mockUser.email });
+      expect(validation).toBeFalsy();
       User.findOne = oldFind;
+    });
+
+    it('should return false if password is not match', async () => {
+      const user = { comparePassword: jest.fn(() => Promise.resolve(false)) };
+      User.findOne = jest.fn(() => user) as any;
+      const validation = await validatePassword(mockUser);
+
+      expect(user.comparePassword).toHaveBeenCalledWith(mockUser.password);
+      expect(validation).toBeFalsy();
+    });
+
+    it('should return omit() result without password field', () => {
+      const omitResult = omit(userExample.toJSON(), 'password');
+
+      expect(omitResult).toEqual(ommitedUser);
     });
   });
 
@@ -71,6 +106,16 @@ describe('user service', () => {
       );
 
       User.create = oldCreate;
+    });
+
+    it('should create user 2', async () => {
+      const spyCreate = jest
+        .spyOn(User, 'create')
+        .mockResolvedValue(mockCreateUser as never);
+      const createdUser = await createUser(mockCreateUser);
+
+      expect(spyCreate).toHaveBeenCalledWith(mockCreateUser);
+      expect(createdUser).toMatchSnapshot();
     });
   });
 
