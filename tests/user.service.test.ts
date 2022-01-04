@@ -107,16 +107,6 @@ describe('user service', () => {
 
       User.create = oldCreate;
     });
-
-    it('should create user 2', async () => {
-      const spyCreate = jest
-        .spyOn(User, 'create')
-        .mockResolvedValue(mockCreateUser as never);
-      const createdUser = await createUser(mockCreateUser);
-
-      expect(spyCreate).toHaveBeenCalledWith(mockCreateUser);
-      expect(createdUser).toMatchSnapshot();
-    });
   });
 
   describe('delete user', () => {
