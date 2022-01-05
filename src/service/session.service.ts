@@ -26,7 +26,7 @@ export function createAccessToken({
   // Build and return the new access token
   const accessToken = sign(
     { ...user, session: session._id },
-    { expiresIn: config.get('accessTokenTtl') }, // 15 minutes
+    { expiresIn: config.get('accessTokenTtl') } // 15 minutes
   );
 
   return accessToken;
@@ -59,7 +59,7 @@ export async function reIssueAccessToken({
 
 export async function updateSession(
   query: FilterQuery<SessionDocument>,
-  update: UpdateQuery<SessionDocument>,
+  update: UpdateQuery<SessionDocument>
 ) {
   return Session.updateOne(query, update);
 }
