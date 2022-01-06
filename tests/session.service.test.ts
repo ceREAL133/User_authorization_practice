@@ -149,25 +149,22 @@ describe('session service', () => {
     it('should check is createAccessToken called with right query', async () => {
       const refreshToken = getRefreshToken();
       const oldSession = Session.findById;
-      _.get = jest.fn(() => {}) as any;
       const session = getMockedSession().findById('');
-      const user = getUserMock() as any;
 
       Session.findById = getMockedSession().findById as any;
 
-      const userSpy = jest
+      const user = jest
         .spyOn(userServiceFn, 'findUser')
-        .mockResolvedValue(user);
+        .mockReturnValue({} as any);
 
       const spy = jest
         .spyOn(sessionServiceFn, 'createAccessToken')
-        .mockReturnValue({} as any);
+        .mockReturnValue('some returned data');
 
       await sessionServiceFn.reIssueAccessToken({ refreshToken });
-
-      // console.log({ user, session });
-
-      expect(spy).toHaveBeenCalledWith({ user, session });
+      setTimeout(() => {
+        expect(spy).toHaveBeenCalledWith({ user, session });
+      });
       Session.findById = oldSession;
     });
   });

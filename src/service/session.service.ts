@@ -42,8 +42,6 @@ export async function reIssueAccessToken({
 
   if (!decoded || !get(decoded, '_id')) return false;
 
-  console.log(decoded);
-
   // Get the session
   const session = await Session.findById(get(decoded, '_id'));
 
@@ -53,6 +51,8 @@ export async function reIssueAccessToken({
   const user = await findUser({ _id: session.user });
 
   if (!user) return false;
+
+  console.log(user);
 
   console.log(session);
   const accessToken = createAccessToken({ user, session });
