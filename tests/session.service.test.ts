@@ -8,13 +8,25 @@ const {
 } = require('../src/service/session.service');
 import config from 'config';
 import * as fn from '../src/utils/jwt.utils';
+import * as userServiceFn from '../src/service/user.service';
 import _ from 'lodash';
+
 jest.unmock('lodash');
+jest.unmock('../src/service/user.service');
 
 const getMockedSession = () => ({
   updateOne: jest.fn((query, update) => null),
   find: jest.fn(() => ({ lean: function leanFunc() {} })),
   create: jest.fn((query) => ({ toJSON: jest.fn(() => null) })),
+  findById: jest.fn((query) => ({
+    valid: true,
+    _id: 'fakeId',
+    user: 'fakeId',
+    userAgent: 'PostmanRuntime/7.28.4',
+    createdAt: ' 2022-01-05T10:36:36.740Z',
+    updatedAt: ' 2022-01-05T10:36:36.740Z',
+    __v: 0,
+  })),
 });
 
 const getRefreshToken = () =>
@@ -33,7 +45,7 @@ const getUserMock = () => ({
 const getSessionMock = () => ({
   valid: true,
   _id: '61d574b48bd7f11a78afaadf',
-  user: 'fakeUser',
+  user: 'fakeId',
   userAgent: 'PostmanRuntime/7.28.4',
   createdAt: ' 2022-01-05T10:36:36.740Z',
   updatedAt: ' 2022-01-05T10:36:36.740Z',
@@ -121,6 +133,22 @@ describe('session service', () => {
 
       expect(_.get).toHaveBeenCalledWith(decoded, '_id');
       _.get = oldGet;
+    });
+
+    it('should check is findUser called with right query', async () => {
+      const refreshToken = getRefreshToken();
+      const oldSession = Session.findById;
+      const session = getMockedSession().findById('');
+
+      Session.findById = getMockedSession().findById as any;
+
+      const findUserSpy = jest
+        .spyOn(userServiceFn, 'findUser')
+        .mockReturnValue({} as any);
+
+      await reIssueAccessToken({ refreshToken });
+      expect(findUserSpy).toHaveBeenCalledWith({ _id: session.user });
+      Session.findById = oldSession;
     });
   });
 });
