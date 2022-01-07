@@ -4,12 +4,13 @@ import config from 'config';
 import * as fn from '../src/utils/jwt.utils';
 import * as userServiceFn from '../src/service/user.service';
 import _ from 'lodash';
+import { type } from 'os';
 
 jest.unmock('lodash');
 jest.unmock('../src/service/user.service');
 
 const getMockedSession = () => ({
-  updateOne: jest.fn((query, update) => null),
+  updateOne: jest.fn((query, update) => {}),
   find: jest.fn(() => ({ lean: function leanFunc() {} })),
   create: jest.fn((query) => ({ toJSON: jest.fn(() => null) })),
   findById: jest.fn((query) => ({
@@ -70,7 +71,7 @@ describe('session service', () => {
       const oldFind = Session.find;
       const query = {};
       Session.find = getMockedSession().find as any;
-      await sessionServiceFn.findSessions(query);
+      const result = await sessionServiceFn.findSessions(query);
 
       expect(Session.find).toHaveBeenCalledWith(query);
       Session.find = oldFind;
@@ -85,9 +86,10 @@ describe('session service', () => {
       const query = { user: userId, userAgent };
       Session.create = getMockedSession().create as any;
 
-      sessionServiceFn.createSession(userId, userAgent);
+      const result = await sessionServiceFn.createSession(userId, userAgent);
 
       expect(Session.create).toHaveBeenCalledWith(query);
+      expect(typeof result).toBe('object');
       Session.create = oldCreate;
     });
   });
@@ -98,12 +100,14 @@ describe('session service', () => {
       const session = getSessionMock() as any;
       const spy = jest.spyOn(fn, 'sign');
 
-      sessionServiceFn.createAccessToken({ user, session });
+      const result = sessionServiceFn.createAccessToken({ user, session });
 
       expect(spy).toHaveBeenCalledWith(
         { ...user, session: session._id },
         { expiresIn: config.get('accessTokenTtl') }
       );
+
+      expect(typeof result).toBe('string');
     });
   });
 
@@ -148,24 +152,32 @@ describe('session service', () => {
 
     it('should check is createAccessToken called with right query', async () => {
       const refreshToken = getRefreshToken();
-      const oldSession = Session.findById;
-      const session = getMockedSession().findById('');
 
       Session.findById = getMockedSession().findById as any;
 
-      const user = jest
+      const foundUser = jest
         .spyOn(userServiceFn, 'findUser')
-        .mockReturnValue({} as any);
+        .mockResolvedValue(getUserMock() as any);
 
-      const spy = jest
-        .spyOn(sessionServiceFn, 'createAccessToken')
-        .mockReturnValue('some returned data');
-
-      await sessionServiceFn.reIssueAccessToken({ refreshToken });
-      setTimeout(() => {
-        expect(spy).toHaveBeenCalledWith({ user, session });
+      jest.spyOn(sessionServiceFn, 'createAccessToken');
+      const result = await sessionServiceFn.reIssueAccessToken({
+        refreshToken,
       });
-      Session.findById = oldSession;
+
+      sessionServiceFn.createAccessToken;
+      console.log(result);
+
+      const user = getUserMock();
+      const session = getMockedSession().findById({});
+
+      expect(typeof result).toBe('string');
+      // expect(sessionServiceFn.createAccessToken).toHaveBeenCalledWith({
+      //   user,
+      //   session,
+      // });
+
+      //add check of returned values to every unit-test
+      //check is sign function on 27 string in session service called correctly
     });
   });
 });
