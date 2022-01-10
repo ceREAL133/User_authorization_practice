@@ -120,6 +120,19 @@ describe('session service', () => {
   });
 
   describe('reissueAccessToken', () => {
+    it('should check is decode fn called with refreshToken param', async () => {
+      const refreshToken = 'fakeToken';
+      const spy = jest
+        .spyOn(fn, 'decode')
+        .mockReturnValueOnce({ decoded: null } as any);
+
+      const result = await sessionServiceFn.reIssueAccessToken({
+        refreshToken,
+      });
+
+      expect(spy).toHaveBeenCalledWith(refreshToken);
+      expect(result).toBeFalsy();
+    });
     it('should check is get fn called with (decoded, _id) params', async () => {
       const oldGet = _.get;
       _.get = jest.fn(() => {}) as any;
@@ -173,19 +186,6 @@ describe('session service', () => {
         { ...user, session: session._id },
         { expiresIn: config.get('accessTokenTtl') }
       );
-    });
-    it('should check is decode fn called with refreshToken param', async () => {
-      const refreshToken = 'fakeToken';
-      const spy = jest
-        .spyOn(fn, 'decode')
-        .mockReturnValue({ decoded: null } as any);
-
-      const result = await sessionServiceFn.reIssueAccessToken({
-        refreshToken,
-      });
-
-      expect(spy).toHaveBeenCalledWith(refreshToken);
-      expect(result).toBeFalsy();
     });
   });
 });
