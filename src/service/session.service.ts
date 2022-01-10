@@ -51,10 +51,6 @@ export async function reIssueAccessToken({
   const user = await findUser({ _id: session.user });
 
   if (!user) return false;
-
-  console.log(user);
-
-  console.log(session);
   const accessToken = createAccessToken({ user, session });
 
   return accessToken;

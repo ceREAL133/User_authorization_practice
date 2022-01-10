@@ -4,14 +4,18 @@ import config from 'config';
 import * as fn from '../src/utils/jwt.utils';
 import * as userServiceFn from '../src/service/user.service';
 import _ from 'lodash';
-import { type } from 'os';
 
 jest.unmock('lodash');
 jest.unmock('../src/service/user.service');
 
 const getMockedSession = () => ({
-  updateOne: jest.fn((query, update) => {}),
-  find: jest.fn(() => ({ lean: function leanFunc() {} })),
+  updateOne: jest.fn((query, update) => ({ obj: 'randomValue' })),
+  find: jest.fn(() => ({
+    randomParam: 'param',
+    lean: function leanFunc() {
+      return { Obj: 'createdObject' };
+    },
+  })),
   create: jest.fn((query) => ({ toJSON: jest.fn(() => null) })),
   findById: jest.fn((query) => ({
     valid: true,
@@ -59,9 +63,11 @@ describe('session service', () => {
       const update = {};
       Session.updateOne = getMockedSession().updateOne as any;
 
-      await sessionServiceFn.updateSession(query, update);
+      const result = await sessionServiceFn.updateSession(query, update);
 
       expect(Session.updateOne).toHaveBeenCalledWith(query, update);
+      expect(typeof result).toBe('object');
+
       Session.updateOne = oldUpdate;
     });
   });
@@ -74,6 +80,8 @@ describe('session service', () => {
       const result = await sessionServiceFn.findSessions(query);
 
       expect(Session.find).toHaveBeenCalledWith(query);
+      expect(typeof result).toBe('object');
+
       Session.find = oldFind;
     });
   });
@@ -112,24 +120,32 @@ describe('session service', () => {
   });
 
   describe('reissueAccessToken', () => {
-    it('should check is decode fn called with refreshToken param', () => {
+    it('should check is decode fn called with refreshToken param', async () => {
       const refreshToken = 'fakeToken';
-      const spy = jest.spyOn(fn, 'decode');
+      const spy = jest
+        .spyOn(fn, 'decode')
+        .mockReturnValue({ decoded: null } as any);
 
-      sessionServiceFn.reIssueAccessToken({ refreshToken });
+      const result = await sessionServiceFn.reIssueAccessToken({
+        refreshToken,
+      });
 
       expect(spy).toHaveBeenCalledWith(refreshToken);
+      expect(result).toBeFalsy();
     });
 
-    it('should check is get fn called with (decoded, _id) params', () => {
+    it('should check is get fn called with (decoded, _id) params', async () => {
       const oldGet = _.get;
       _.get = jest.fn(() => {}) as any;
       const refreshToken = getRefreshToken();
       const { decoded } = fn.decode(refreshToken);
 
-      sessionServiceFn.reIssueAccessToken({ refreshToken });
+      const result = await sessionServiceFn.reIssueAccessToken({
+        refreshToken,
+      });
 
       expect(_.get).toHaveBeenCalledWith(decoded, '_id');
+      expect(result).toBeFalsy();
       _.get = oldGet;
     });
 
@@ -151,31 +167,6 @@ describe('session service', () => {
     });
 
     it('should check is createAccessToken called with right query', async () => {
-      const refreshToken = getRefreshToken();
-
-      Session.findById = getMockedSession().findById as any;
-
-      const foundUser = jest
-        .spyOn(userServiceFn, 'findUser')
-        .mockResolvedValue(getUserMock() as any);
-
-      jest.spyOn(sessionServiceFn, 'createAccessToken');
-      const result = await sessionServiceFn.reIssueAccessToken({
-        refreshToken,
-      });
-
-      sessionServiceFn.createAccessToken;
-      console.log(result);
-
-      const user = getUserMock();
-      const session = getMockedSession().findById({});
-
-      expect(typeof result).toBe('string');
-      // expect(sessionServiceFn.createAccessToken).toHaveBeenCalledWith({
-      //   user,
-      //   session,
-      // });
-
       //add check of returned values to every unit-test
       //check is sign function on 27 string in session service called correctly
     });

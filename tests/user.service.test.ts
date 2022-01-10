@@ -77,6 +77,9 @@ describe('user service', () => {
     });
 
     it('should return omit() result without password field', () => {
+      ////////////////////////////////////////////////////////////////////
+      /////////// rewrite this test
+      ////////////////////////////////////////////////////////////////////
       const omitResult = omit(userExample.toJSON(), 'password');
 
       expect(omitResult).toEqual(ommitedUser);
