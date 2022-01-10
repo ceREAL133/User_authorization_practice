@@ -120,20 +120,6 @@ describe('session service', () => {
   });
 
   describe('reissueAccessToken', () => {
-    it('should check is decode fn called with refreshToken param', async () => {
-      const refreshToken = 'fakeToken';
-      const spy = jest
-        .spyOn(fn, 'decode')
-        .mockReturnValue({ decoded: null } as any);
-
-      const result = await sessionServiceFn.reIssueAccessToken({
-        refreshToken,
-      });
-
-      expect(spy).toHaveBeenCalledWith(refreshToken);
-      expect(result).toBeFalsy();
-    });
-
     it('should check is get fn called with (decoded, _id) params', async () => {
       const oldGet = _.get;
       _.get = jest.fn(() => {}) as any;
@@ -163,12 +149,43 @@ describe('session service', () => {
 
       await sessionServiceFn.reIssueAccessToken({ refreshToken });
       expect(findUserSpy).toHaveBeenCalledWith(expectedQuery);
+
       Session.findById = oldSession;
     });
 
     it('should check is createAccessToken called with right query', async () => {
-      //add check of returned values to every unit-test
-      //check is sign function on 27 string in session service called correctly
+      const refreshToken = getRefreshToken() as any;
+      const user = getUserMock() as any;
+      const session = getSessionMock() as any;
+      const spy = jest
+        .spyOn(fn, 'sign')
+        .mockReturnValue({ obj: 'randomParam' } as any);
+
+      jest.spyOn(userServiceFn, 'findUser').mockReturnValue(user as any);
+
+      Session.findById = jest.fn(() => session);
+
+      const result = await sessionServiceFn.reIssueAccessToken({
+        refreshToken,
+      });
+
+      expect(spy).toHaveBeenCalledWith(
+        { ...user, session: session._id },
+        { expiresIn: config.get('accessTokenTtl') }
+      );
+    });
+    it('should check is decode fn called with refreshToken param', async () => {
+      const refreshToken = 'fakeToken';
+      const spy = jest
+        .spyOn(fn, 'decode')
+        .mockReturnValue({ decoded: null } as any);
+
+      const result = await sessionServiceFn.reIssueAccessToken({
+        refreshToken,
+      });
+
+      expect(spy).toHaveBeenCalledWith(refreshToken);
+      expect(result).toBeFalsy();
     });
   });
 });
