@@ -9,14 +9,24 @@ jest.unmock('lodash');
 jest.unmock('../src/service/user.service');
 
 const getMockedSession = () => ({
-  updateOne: jest.fn((query, update) => ({ obj: 'randomValue' })),
+  updateOne: jest.fn((query, update) => ({ valid: true, _id: 'fakeId' })),
   find: jest.fn(() => ({
     randomParam: 'param',
     lean: function leanFunc() {
-      return { Obj: 'createdObject' };
+      return { obj: 'createdObject' };
     },
   })),
-  create: jest.fn((query) => ({ toJSON: jest.fn(() => null) })),
+  create: jest.fn((query) => ({
+    toJSON: jest.fn(() => ({
+      valid: true,
+      _id: 'fakeId',
+      user: 'fakeId',
+      userAgent: 'PostmanRuntime/7.28.4',
+      createdAt: ' 2022-01-05T10:36:36.740Z',
+      updatedAt: ' 2022-01-05T10:36:36.740Z',
+      __v: 0,
+    })),
+  })),
   findById: jest.fn((query) => ({
     valid: true,
     _id: 'fakeId',
@@ -63,10 +73,11 @@ describe('session service', () => {
       const update = {};
       Session.updateOne = getMockedSession().updateOne as any;
 
+      const expectedResult = { valid: true, _id: 'fakeId' };
       const result = await sessionServiceFn.updateSession(query, update);
 
       expect(Session.updateOne).toHaveBeenCalledWith(query, update);
-      expect(typeof result).toBe('object');
+      expect(result).toEqual(expectedResult);
 
       Session.updateOne = oldUpdate;
     });
@@ -77,10 +88,11 @@ describe('session service', () => {
       const oldFind = Session.find;
       const query = {};
       Session.find = getMockedSession().find as any;
+      const expectedResult = { obj: 'createdObject' };
       const result = await sessionServiceFn.findSessions(query);
 
       expect(Session.find).toHaveBeenCalledWith(query);
-      expect(typeof result).toBe('object');
+      expect(result).toEqual(expectedResult);
 
       Session.find = oldFind;
     });
@@ -93,11 +105,12 @@ describe('session service', () => {
       const userAgent = 'fakeAgent';
       const query = { user: userId, userAgent };
       Session.create = getMockedSession().create as any;
+      const expectedResult = getSessionMock();
 
       const result = await sessionServiceFn.createSession(userId, userAgent);
 
       expect(Session.create).toHaveBeenCalledWith(query);
-      expect(typeof result).toBe('object');
+      expect(result).toEqual(expectedResult);
       Session.create = oldCreate;
     });
   });

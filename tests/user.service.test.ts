@@ -6,7 +6,7 @@ const {
   validatePassword,
 } = require('../src/service/user.service');
 import User from '../src/model/user.model';
-import { omit } from 'lodash';
+import _ from 'lodash';
 
 const userPayload = () => ({
   email: 'jane@example.com',
@@ -34,14 +34,12 @@ const userExample = {
       return true;
     } else return false;
   }),
-  toJSON: jest.fn(() => {
-    return {
-      email: 'jane@example.com',
-      name: 'Jane',
-      age: 15,
-      password: '1CubeIsCool!',
-    };
-  }),
+  toJSON: jest.fn(() => ({
+    email: 'jane@example.com',
+    name: 'Jane',
+    age: 15,
+    password: '1CubeIsCool!',
+  })),
 };
 
 const mockUser = {
@@ -76,13 +74,24 @@ describe('user service', () => {
       expect(validation).toBeFalsy();
     });
 
-    it('should return omit() result without password field', () => {
-      ////////////////////////////////////////////////////////////////////
-      /////////// rewrite this test
-      ////////////////////////////////////////////////////////////////////
-      const omitResult = omit(userExample.toJSON(), 'password');
+    it('should return omit() result without password field', async () => {
+      const user = {
+        comparePassword: jest.fn(() => ({
+          email: 'jane@example.com',
+        })),
+        toJSON: jest.fn(() => ({
+          email: 'jane@example.com',
+          name: 'Jane',
+          age: 15,
+          password: 'password',
+        })),
+      };
+      User.findOne = jest.fn(() => user) as any;
+      jest.spyOn(_, 'omit').mockReturnValue(ommitedUser);
 
-      expect(omitResult).toEqual(ommitedUser);
+      const result = await validatePassword(mockUser);
+
+      expect(result).toEqual(ommitedUser);
     });
   });
 
